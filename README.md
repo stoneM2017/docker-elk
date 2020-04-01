@@ -32,6 +32,7 @@ Other available stack variants:
      * [Windows](#windows)
      * [macOS](#macos)
 2. [Usage](#usage)
+   * [Version selection](#version-selection)
    * [Bringing up the stack](#bringing-up-the-stack)
    * [Cleanup](#cleanup)
    * [Initial setup](#initial-setup)
@@ -51,7 +52,6 @@ Other available stack variants:
    * [How to specify the amount of memory used by a service](#how-to-specify-the-amount-of-memory-used-by-a-service)
    * [How to enable a remote JMX connection to a service](#how-to-enable-a-remote-jmx-connection-to-a-service)
 6. [Going further](#going-further)
-   * [Using a newer stack version](#using-a-newer-stack-version)
    * [Plugins and integrations](#plugins-and-integrations)
    * [Swarm mode](#swarm-mode)
 
@@ -99,6 +99,14 @@ exclusively. Make sure the repository is cloned in one of those locations or fol
 [documentation][mac-mounts] to add more locations.
 
 ## Usage
+
+### Version selection
+
+To use a different version of the core Elastic components, simply change the version numbers inside the `.env` file. If
+you are upgrading an existing stack, please carefully read the note in the next section.
+
+**:warning: Always pay attention to the [official upgrade instructions][upgrade] for each individual component before
+performing a stack upgrade.**
 
 ### Bringing up the stack
 
@@ -341,19 +349,6 @@ logstash:
 ```
 
 ## Going further
-
-### Using a newer stack version
-
-To use a different Elastic Stack version than the one currently available in the repository, simply change the version
-number inside the `.env` file, and rebuild the stack with:
-
-```console
-$ docker-compose build
-$ docker-compose up
-```
-
-> :warning: Always pay attention to the [upgrade instructions][upgrade] for each individual component before
-performing a stack upgrade.
 
 ### Plugins and integrations
 
