@@ -1,0 +1,59 @@
+#报警规则名字,全局唯一
+name: elastalert wechat
+
+#定义报警的类型,这里我以frequency为例,当给定时间至少有一定数量的事件出现时触发报警.官方文档:https://elastalert.readthedocs.io/en/latest/ruletypes.html#rule-types
+type: any
+
+aggregation:
+  minutes: 1
+
+#这里指定你的logstash索引
+index: faceservice-common-error*,databroker-common-error*
+
+timeframe:
+ minutes: 1
+realert:
+ minutes: 0
+
+#filer插件定义我们要过滤的条件具体可以参考官方文档
+filter: []
+# - query:
+#     query_string:
+#         query: "message: Exception OR message: ERROR"
+
+# (Required)
+# The alert is use when a match is found
+# 调用我们的报警插件
+alert:
+- "elastalert_modules.wechat_qiye_alert.WeChatAlerter"
+
+###############后面主要是定义我们的报警模板这里不再赘述具体还是参考官方文档
+alert_subject: "{0}  's Error!!"
+alert_subject_args:
+- _index
+alert_text_type: alert_text_only
+alert_text: |
+  告警程序: "{} 's Error!!"
+  触发时间: {}
+  异常内容:
+    {}
+
+alert_text_args:
+  - fields.app
+  - "@timestamp"
+  - msg
+
+#后台登陆后【设置】->【权限管理】->【普通管理组】->【创建并设置通讯录和应用权限】->【CorpID，Secret】
+#设置微信企业号的appid
+wechat_corp_id: "wwe605aa6ca31f9f91"
+#设置微信企业号的Secret
+wechat_secret: "D_yAZ7iazHlBjBdENwp39I61WfeQZYwDFEKnCBp3NYs"
+#后台登陆后【应用中心】->【选择应用】->【应用id】
+#设置微信企业号应用id
+wechat_agent_id: 1000003
+#部门id
+wechat_party_id: 19
+#用户微信号
+wechat_user_id: "@all"
+# 标签id
+#tag_id: 1

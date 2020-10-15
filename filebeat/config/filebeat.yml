@@ -1,0 +1,116 @@
+#=========================== Filebeat inputs =============================
+filebeat.inputs:
+- type: log
+  enabled: true
+  paths:
+    - /usr/share/filebeat/logs/faceservice/faceMiddleware-web.log*
+  fields: {
+    #machine: master
+    app: facemiddleware
+  }
+  #fields_under_root: true
+
+  ### Multiline options
+  multiline.pattern: '^\d{4}-\d{2}-\d{2}' # starting with YYYY-MM-DD
+  multiline.negate: true
+  multiline.match: after
+
+- type: log
+  enabled: true
+  paths:
+    - /usr/share/filebeat/logs/dataBroker/dataBroker-web.log*
+  fields:
+    app: databroker
+
+  ### Multiline options
+  multiline.pattern: '^\d{4}-\d{2}-\d{2}' # starting with YYYY-MM-DD
+  multiline.negate: true
+  multiline.match: after
+
+- type: log
+  enabled: true
+  paths:
+    - /usr/share/filebeat/logs/faceservice/common-error.log*
+  fields:
+    app: faceservice-common-error
+
+  ### Multiline options
+  multiline.pattern: '^\d{4}-\d{2}-\d{2}' # starting with YYYY-MM-DD
+  multiline.negate: true
+  multiline.match: after
+
+- type: log
+  enabled: true
+  paths:
+    - /usr/share/filebeat/logs/dataBroker/common-error.log*
+  fields:
+    app: databroker-common-error
+
+  ### Multiline options
+  multiline.pattern: '^\d{4}-\d{2}-\d{2}' # starting with YYYY-MM-DD
+  multiline.negate: true
+  multiline.match: after
+
+
+- type: log
+  enabled: true
+  paths:
+    - /usr/share/filebeat/logs/dailystats/checkin_profile_pictures.log*
+  fields:
+    app: statistic-daily
+
+  ### Multiline options
+  multiline.pattern: '^\d{4}-\d{2}-\d{2}' # starting with YYYY-MM-DD
+  multiline.negate: true
+  multiline.match: after
+
+
+- type: log
+  enabled: true
+  paths:
+    - /usr/share/filebeat/logs/dailystats/check_mask_stats.log*
+  fields:
+    app: statistic-check_mask
+
+  ### Multiline options
+  multiline.pattern: '^\d{4}-\d{2}-\d{2}' # starting with YYYY-MM-DD
+  multiline.negate: true
+  multiline.match: after
+
+- type: log
+  enabled: true
+  paths:
+    - /usr/share/filebeat/logs/fsbe/postCrossVerify.log
+  fields:
+    app: postcrossverify
+
+  ### Multiline options
+  multiline.pattern: '^\d{4}-\d{2}-\d{2}' # starting with YYYY-MM-DD
+  multiline.negate: true
+  multiline.match: after
+
+#================================ Processors =====================================
+processors:
+- drop_fields:
+    fields: ["input", "log", "host", "ecs", "agent"]
+#============================= Filebeat modules ===============================
+ilebeat.config.modules:
+  # Glob pattern for configuration loading
+  path: ${path.config}/modules.d/*.yml
+
+#==================== Elasticsearch template setting ==========================
+
+setup.template.settings:
+  index.number_of_shards: 1
+  #index.codec: best_compression
+  #_source.enabled: false
+
+#================================ Logging =====================================
+logging.level: debug 
+#----------------------------- Logstash output --------------------------------
+output.logstash:
+  # The Logstash hosts
+  hosts: ["logstash:5044"]
+  loadbalance: true
+  index: "filebeat"
+

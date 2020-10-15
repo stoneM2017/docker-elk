@@ -1,0 +1,1 @@
+LOG_PREFIX %{TIMESTAMP_ISO8601:logdate} %{LOGLEVEL:[log][level]} %{DATA} *\[%{DATA}]\s*\[%{DATA:[service][name]}\]\s
