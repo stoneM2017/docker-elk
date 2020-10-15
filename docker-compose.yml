@@ -19,7 +19,7 @@ services:
       - "9300:9300"
     environment:
       ES_JAVA_OPTS: "-Xmx256m -Xms256m"
-      ELASTIC_PASSWORD: changeme
+      #ELASTIC_PASSWORD: changeme
       # Use single node discovery in order to disable production mode and avoid bootstrap checks
       # see https://www.elastic.co/guide/en/elasticsearch/reference/current/bootstrap-checks.html
       discovery.type: single-node
@@ -39,6 +39,10 @@ services:
       - type: bind
         source: ./logstash/pipeline
         target: /usr/share/logstash/pipeline
+        read_only: true
+      - type: bind
+        source: ./logstash/patterns
+        target: /usr/share/logstash/patterns
         read_only: true
     ports:
       - "5000:5000/tcp"
@@ -67,6 +71,41 @@ services:
       - elk
     depends_on:
       - elasticsearch
+  
+  filebeat:
+    build:
+      context: filebeat/
+      args:
+        ELK_VERSION: $ELK_VERSION
+    volumes:
+      - type: bind
+        source: ./filebeat/config/filebeat.yml
+        target: /usr/share/filebeat/filebeat.yml
+        read_only: true
+      - type: volume
+        source: filebeat
+        target: /usr/share/filebeat/data
+      - /tmp/logs:/usr/share/filebeat/logs
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+
+  elastalert:
+    build:
+      context: elastalert/
+    environment:
+        ELASTICSEARCH_PASSWORD: "NpoXX2ZyvHSTJIaf6jR2"
+        ELASTICSEARCH_USER: "elastic"
+        ELASTALERT_RUN_EVERY: 1
+        ELASTALERT_BUFFER_TIME: 5
+    volumes:
+      - type: bind
+        source: ./elastalert/rules/wechat.yml
+        target: /opt/elastalert/rules/wechat.yml
+        read_only: true
+    networks:
+      - elk
 
 networks:
   elk:
@@ -74,3 +113,4 @@ networks:
 
 volumes:
   elasticsearch:
+  filebeat:
